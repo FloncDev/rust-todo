@@ -98,6 +98,7 @@ fn main() {
         },
         Some(("rm", cmd_match)) => {
             let partial_id = cmd_match.get_one::<String>("id").unwrap();
+            todos.rm(partial_id).unwrap();
         },
         _ => {println!("other")}
     }
