@@ -1,12 +1,14 @@
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 use std::{fs, io};
+use uuid::Uuid;
 
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Todo {
     pub summary: String,
-    pub description: String,
+    pub description: Option<String>,
     pub done: bool,
+    pub id: Uuid
 }
 
 #[derive(Debug)]
@@ -33,6 +35,17 @@ impl Todos {
 
     pub fn add(&mut self, todo: Todo) -> Result<(), io::Error> {
         self.todos.push(todo);
+
+        self.save()
+    }
+
+    pub fn done(&mut self, partial_id: &String) -> Result<(), io::Error> {
+        self.todos
+            .iter_mut()
+            .filter(|todo| todo.id.to_string().starts_with(partial_id))
+            .nth(0)
+            .expect("Could not find todo starting with that ID.")
+            .done = true;
 
         self.save()
     }
